@@ -22,7 +22,7 @@ Predicts whether a movie will be **High-Rated** (IMDb rating ≥ 6.5) using only
 ## 🏗️ Architecture
 
 <div align="center">
-<img src="architecture-svgs/03-movie-rating-architecture.svg" alt="Movie rating prediction animated architecture diagram" width="100%"/>
+<img src="03-movie-rating-architecture.svg" alt="Movie rating prediction animated architecture diagram" width="100%"/>
 </div>
 
 <details>
