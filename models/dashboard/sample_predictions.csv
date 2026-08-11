@@ -1,0 +1,51 @@
+Name,Year,Genre,Director,Lead Actor,Votes,Actual Rating,High_Rated,Predicted,Probability
+#Gadhvi (He thought he was Gandhi),1989.0,Drama,Saawan Kumar Tak,Jeetendra,55,7.0,0,0,0.054
+#Yaaram,2004.0,Drama,Madhu Ambat,Rati Agnihotri,17,4.4,0,0,0.163
+...Aur Pyaar Ho Gaya,1987.0,Action,B. Gupta,Puneet Issar,301,4.7,0,0,0.218
+...Yahaan,2004.0,Comedy,Raj Kaushal,Sanjay Suri,99,7.4,0,0,0.144
+?: A Question Mark,1987.0,Drama,Chandrakant Joshi,Girish Karnad,37,5.6,0,1,0.672
+@Andheri,1968.0,Crime,Dhorairaj Bhagavan,Rajkumar,76,4.0,1,1,0.768
+1:1.6 An Ode to Lost Love,2017.0,Action,Rahul Dholakia,Raj Arjun,41441,6.2,1,1,0.677
+1:13:7 Ek Tera Saath,2015.0,Action,Kuntaa Nikkil,Kuntaa Nikkil,57,5.9,1,0,0.354
+100 Days,2018.0,Action,Milap Zaveri,John Abraham,6302,6.5,0,0,0.394
+100% Love,2012.0,Comedy,Amol Shetge,Rani Agarwal,10,5.7,0,0,0.102
+102 Not Out,2005.0,Romance,Chander Mishra,Sherlyn Chopra,35,7.4,0,0,0.243
+10ml LOVE,1991.0,Action,Rama Rao Tatineni,Rakhee Gulzar,105,6.3,0,0,0.025
+12 O'Clock,1959.0,Drama,Dhirubhai Desai,Ajit,5,7.2,0,0,0.165
+12 O'Clock,2011.0,Action,Prashant Chadha,Sachiin Joshi,346,4.4,0,0,0.051
+127 B,2011.0,Action,Ganesh Acharya,Sumit Arora,84,6.6,0,0,0.135
+13B: Fear Has a New Address,2005.0,Crime,Zunaid Memon,Nassar Abdulla,84,7.3,0,0,0.096
+15 Park Avenue,2017.0,Thriller,Ashtar Sayed,Raveena Tandon,399,7.1,0,0,0.129
+15th August,1998.0,Action,Vikram Bhatt,Aamir Khan,10997,5.6,1,1,0.76
+16 December,2002.0,Drama,Sunil Kumar Desai,Anand,33,6.9,0,0,0.162
+18.11,2012.0,Drama,Kamal K.M.,Geetanjali Thapa,152,3.5,1,1,0.524
+1857,2015.0,Comedy,Aijaz Khan,Rajpal Yadav,356,5.0,0,0,0.078
+19 Revolutions,1980.0,Drama,Esmayeel Shroff,Rajesh Khanna,101,4.5,0,1,0.707
+1920,1997.0,Action,Deepak S. Shivdasani,Sunil Shetty,353,6.4,0,0,0.036
+1920 London,1996.0,Drama,Sathish Ranjan,Mahesh Anand,5,4.1,0,0,0.079
+1920: Evil Returns,2018.0,Drama,Kabir Singh Chowdhry,Chamkara,41,4.8,1,1,0.767
+1921,2006.0,Action,Raman Kumar,Mahima Chaudhry,116,4.5,0,0,0.027
+1942: A Love Story,2017.0,Drama,Mohit Goswami,Anuj Jain,27,7.2,0,1,0.656
+1971,1985.0,Action,Nasir Hussain,Sanjeev Kumar,101,8.1,0,0,0.421
+1978: A Teen Night Out,2008.0,Action,Goldie Behl,Jayshree Arora,2442,4.0,0,0,0.194
+1982 - A Love Marriage,1979.0,Action,Sher Jung Singh,Mahendra Sandhu,9,5.5,1,0,0.139
+19th January,1993.0,Drama,Rajkumar Kohli,Vikas Anand,36,7.3,0,0,0.055
+2 Little Indians,2009.0,Comedy,Jai Tank,Subrat Dutta,112,5.6,0,0,0.195
+2 Nights in Soul Valley,1994.0,Action,Mukesh Duggal,Sunil Shetty,814,6.8,0,0,0.098
+2 October,1974.0,Crime,Deepak Bahry,Vikram Makandar,9,5.0,0,0,0.119
+2 States,2010.0,Animation,Rajiv S. Ruia,Rahul Pendkalkar,45,6.9,0,0,0.093
+2.0,1995.0,Action,T.L.V. Prasad,Mithun Chakraborty,162,6.2,0,0,0.013
+2001: Do Hazaar Ek,1940.0,Drama,Debaki Bose,Leela Desai,11,3.5,1,0,0.426
+2016 the End,1968.0,Action,Dhorairaj Bhagavan,T.R. Narasimharaju,26,6.1,1,0,0.317
+22 Days,2013.0,Adventure,Geethu Mohandas,Nawazuddin Siddiqui,949,6.1,1,1,0.536
+22 June 1897,2011.0,Comedy,Shubh Mukherjee,Shubh Mukherjee,39,7.7,0,0,0.203
+22 Yards,1961.0,Drama,Ramesh Saigal,Dhumal,48,6.1,1,1,0.913
+23rd March 1931: Shaheed,2004.0,Action,Anurag Kashyap,Kay Kay Menon,19493,5.1,1,1,0.843
+26th July at Barista,1979.0,Action,P.S. Prakash,B. Vittalacharya,6,3.1,0,0,0.155
+27 Down,2016.0,Action,Rajkumar R. Pandey,Pradeep Pandey,19,6.9,0,0,0.187
+3 AM: A Paranormal Experience,1989.0,Drama,Prakash Jha,Basant Josalkar,53,5.0,1,1,0.786
+3 Bachelors,1968.0,Mystery,Yakub Hasan Rizvi,Meena Kumari,54,3.3,1,1,0.854
+3 Deewarein,1963.0,Comedy,R.C. Talwar,Raj Kapoor,52,7.8,0,1,0.934
+3 Dev,1992.0,Comedy,Rakesh Roshan,Aparajita,541,6.9,0,0,0.115
+3 Idiots,2010.0,Animation,Chetan Desai,Manoj Bajpayee,456,8.4,0,0,0.175
+3 Nights 4 Days,1979.0,Drama,Basu Bhattacharya,Sanjeev Kumar,102,5.2,1,1,0.701

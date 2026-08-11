@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>High-Rated Movie Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div id="poster-wall" aria-hidden="true"></div>
+
+  <div class="ui">
+    <header class="glass header">
+      <div>
+        <h1>High-Rated <span>Movie Predictor</span></h1>
+        <p>Will it cross IMDb <strong>6.5</strong>? Built on the IMDb India dataset — watch the meter react.</p>
+      </div>
+      <div class="badges">
+        <span class="badge">Accuracy 78.3%</span>
+        <a class="badge link" href="/dashboard">Results Dashboard</a>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="glass card" id="form-card">
+        <h2>Enter movie details</h2>
+        <form id="predict-form" autocomplete="off">
+          <div class="grid">
+            <label>Primary Genre
+              <select name="genre" id="genre" required>
+                <option value="">-- Select genre --</option>
+                {% for g in genres %}<option value="{{ g }}">{{ g }}</option>{% endfor %}
+              </select>
+            </label>
+            <label>Release Year
+              <input type="number" name="year" id="year" min="1900" max="2026" placeholder="e.g. 2015" required>
+            </label>
+            <label>Expected Vote Count
+              <input type="number" name="votes" id="votes" min="0" placeholder="e.g. 5000" required>
+            </label>
+            <label>Director
+              <input type="text" name="director" id="director" list="director-list" placeholder="e.g. Anurag Kashyap" required>
+            </label>
+            <label>Lead Actor
+              <input type="text" name="actor" id="actor" list="actor-list" placeholder="e.g. Irrfan Khan" required>
+            </label>
+          </div>
+
+          <details class="advanced">
+            <summary>Advanced (optional — improves accuracy)</summary>
+            <div class="grid">
+              <label>Duration (minutes)
+                <input type="number" name="duration" id="duration" min="10" max="600" placeholder="e.g. 142">
+              </label>
+              <label>Actor 2
+                <input type="text" name="actor2" id="actor2" list="actor-list" placeholder="Optional">
+              </label>
+              <label>Actor 3
+                <input type="text" name="actor3" id="actor3" list="actor-list" placeholder="Optional">
+              </label>
+            </div>
+          </details>
+
+          <button type="submit" class="btn-glow">Predict</button>
+        </form>
+
+        <datalist id="director-list">{% for d in directors %}<option value="{{ d }}"></option>{% endfor %}</datalist>
+        <datalist id="actor-list">{% for a in actors %}<option value="{{ a }}"></option>{% endfor %}</datalist>
+      </section>
+
+      <section id="result" class="glass result hidden">
+        <h2 id="verdict" class="verdict"></h2>
+        <div class="viz-row">
+          <div class="gauge-wrap">
+            <svg viewBox="0 0 120 120" class="gauge">
+              <circle class="gauge-bg" cx="60" cy="60" r="50"></circle>
+              <circle id="gauge-fill" class="gauge-fill" cx="60" cy="60" r="50"></circle>
+            </svg>
+            <div class="gauge-label">
+              <strong id="probability">—</strong>
+              <span>high-rated</span>
+            </div>
+          </div>
+          <div class="stats">
+            <div class="stat"><span>Confidence</span><strong id="confidence"></strong></div>
+            <div class="stat"><span>Baseline</span><strong>{{ '%.0f'|format(baseline * 100) }}%</strong></div>
+            <div class="stat"><span>Threshold</span><strong>6.5 IMDb</strong></div>
+          </div>
+        </div>
+        <div id="contrib" class="contrib hidden">
+          <h3>Why this prediction</h3>
+          <div id="contrib-bars" class="contrib-bars"></div>
+        </div>
+        <p id="detail" class="detail"></p>
+      </section>
+    </main>
+
+    <footer class="footer glass">
+      <span>Deployed model: {{ model_name }} &middot; OOF-selected &middot; no test leakage</span>
+    </footer>
+  </div>
+
+  <script>
+    window.POSTERS = {{ posters | tojson }};
+
+    (function buildWall() {
+      const wall = document.getElementById('poster-wall');
+      const TILE_W = 230, TILE_H = 345, GAP = 10;
+      const cols = Math.ceil((window.innerWidth + GAP) / (TILE_W + GAP)) + 1;
+      const rows = Math.ceil((window.innerHeight + GAP) / (TILE_H + GAP)) + 1;
+      const base = "{{ url_for('static', filename='posters/') }}";
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const tile = document.createElement('div');
+          tile.className = 'poster-tile';
+          tile.style.backgroundImage = `url('${base}${window.POSTERS[(r * cols + c) % window.POSTERS.length]}')`;
+          wall.appendChild(tile);
+        }
+      }
+    })();
+  </script>
+  <script>
+    const form = document.getElementById('predict-form');
+    const card = document.getElementById('form-card');
+    const result = document.getElementById('result');
+    const verdict = document.getElementById('verdict');
+    const probability = document.getElementById('probability');
+    const confidence = document.getElementById('confidence');
+    const detail = document.getElementById('detail');
+    const gaugeFill = document.getElementById('gauge-fill');
+    const contribBox = document.getElementById('contrib');
+    const contribBars = document.getElementById('contrib-bars');
+
+    /* 3D tilt on the form card */
+    card.addEventListener('mousemove', (e) => {
+      const r = card.getBoundingClientRect();
+      const x = (e.clientX - r.left) / r.width - 0.5;
+      const y = (e.clientY - r.top) / r.height - 0.5;
+      card.style.transform = `perspective(900px) rotateX(${(-y * 5).toFixed(2)}deg) rotateY(${(x * 7).toFixed(2)}deg) translateZ(0)`;
+    });
+    card.addEventListener('mouseleave', () => { card.style.transform = ''; });
+
+    const MAX_IMPACT = 2.0;
+
+    function renderGauge(p) {
+      const c = 2 * Math.PI * 50;
+      gaugeFill.style.strokeDasharray = c;
+      gaugeFill.style.strokeDashoffset = c * (1 - p);
+      const good = p >= 0.5;
+      gaugeFill.style.stroke = good ? '#34d399' : '#f87171';
+    }
+
+    function renderContrib(items) {
+      contribBars.innerHTML = '';
+      items.forEach((it) => {
+        const mag = Math.min(1, Math.abs(it.impact) / MAX_IMPACT);
+        const pos = it.impact >= 0;
+        const row = document.createElement('div');
+        row.className = 'cb-row';
+        row.innerHTML = `
+          <span class="cb-name">${it.feature}</span>
+          <span class="cb-track"><span class="cb-fill ${pos ? 'pos' : 'neg'}" style="width:${Math.round(mag * 100)}%"></span></span>
+          <span class="cb-val ${pos ? 'pos' : 'neg'}">${pos ? '+' : ''}${it.impact.toFixed(3)}</span>`;
+        contribBars.appendChild(row);
+      });
+      contribBox.classList.remove('hidden');
+    }
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('button');
+      btn.disabled = true;
+      btn.textContent = 'Predicting…';
+      const data = new FormData(form);
+      try {
+        const res = await fetch('/predict', { method: 'POST', body: data });
+        const json = await res.json();
+        if (json.error) {
+          verdict.textContent = json.error;
+          verdict.className = 'verdict error';
+          probability.textContent = '—';
+          confidence.textContent = '—';
+          detail.textContent = '';
+          contribBox.classList.add('hidden');
+        } else {
+          const p = json.probability;
+          const good = json.verdict === 'High-Rated';
+          verdict.textContent = json.verdict;
+          verdict.className = 'verdict ' + (good ? 'high' : 'low');
+          probability.textContent = (p * 100).toFixed(1) + '%';
+          confidence.textContent = json.confidence + '%';
+          detail.textContent = `Model: ${json.model}  |  IMDb threshold ≥ ${json.rating_threshold}`;
+          renderGauge(p);
+          renderContrib(json.contributions || []);
+        }
+        result.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Predict';
+      }
+    });
+  </script>
+</body>
+</html>

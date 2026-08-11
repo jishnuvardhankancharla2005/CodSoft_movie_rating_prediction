@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Results Dashboard — Movie Rating Predictor</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header>
+    <h1>Results Dashboard</h1>
+    <p>Evaluation of all classifiers on a held-out 20% test split (stratified).</p>
+    <nav><a href="/">Predictor</a> &middot; <a href="/dashboard">Results Dashboard</a></nav>
+  </header>
+
+  <main class="container">
+    <section class="cards">
+      <div class="card">
+        <h3>Best Model</h3>
+        <p class="big">{{ meta.model_name }}</p>
+      </div>
+      <div class="card">
+        <h3>Accuracy</h3>
+        <p class="big">{{ '%.1f'|format(metrics.results[meta.model_name].accuracy * 100) }}%</p>
+        <small>Baseline (majority class): {{ '%.1f'|format(baseline * 100) }}%</small>
+      </div>
+      <div class="card">
+        <h3>ROC-AUC</h3>
+        <p class="big">{{ metrics.results[meta.model_name].roc_auc }}</p>
+      </div>
+      <div class="card">
+        <h3>Training Data</h3>
+        <p class="big">{{ '{:,}'.format(meta.n_train + meta.n_test) }}</p>
+        <small>Rows after cleaning; {{ meta.n_features }} features</small>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Model Comparison</h2>
+      <table>
+        <thead>
+          <tr><th>Model</th><th>Accuracy</th><th>Precision</th><th>Recall</th><th>F1</th><th>ROC-AUC</th></tr>
+        </thead>
+        <tbody>
+          {% for name, m in metrics.results.items() %}
+          <tr>
+            <td>{{ name }}</td>
+            <td>{{ m.accuracy if m.accuracy is defined else '—' }}</td>
+            <td>{{ m.precision if m.precision is defined else '—' }}</td>
+            <td>{{ m.recall if m.recall is defined else '—' }}</td>
+            <td>{{ m.f1 if m.f1 is defined else '—' }}</td>
+            <td>{{ m.roc_auc if m.roc_auc is defined else '—' }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <div class="chart-grid">
+      <figure>
+        <img src="{{ url_for('static', filename='confusion_matrix.png') }}" alt="Confusion matrix">
+        <figcaption>Confusion matrix — best model</figcaption>
+      </figure>
+      <figure>
+        <img src="{{ url_for('static', filename='roc_curves.png') }}" alt="ROC curves">
+        <figcaption>ROC curves — all models</figcaption>
+      </figure>
+      <figure>
+        <img src="{{ url_for('static', filename='metric_bars.png') }}" alt="Metric bars">
+        <figcaption>Metric comparison</figcaption>
+      </figure>
+      <figure>
+        <img src="{{ url_for('static', filename='feature_importance.png') }}" alt="Feature importance">
+        <figcaption>Top features — best model</figcaption>
+      </figure>
+    </div>
+
+    <section class="panel">
+      <h2>Sample Test Predictions</h2>
+      <div class="table-wrap">
+        <table>
+          <thead><tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr></thead>
+          <tbody>
+            {% for row in sample %}
+            <tr>
+              {% for c in columns %}
+              <td>
+                {% if c == 'Predicted' %}{{ row[c] }}{% elif c == 'Probability' %}{{ '%.0f'|format(row[c] * 100) }}%{% else %}{{ row[c] }}{% endif %}
+              </td>
+              {% endfor %}
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
